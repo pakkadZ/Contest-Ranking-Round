@@ -6,7 +6,7 @@ from tensorflow.keras.models import load_model
 # ขนาดของภาพที่โมเดลใช้
 IMAGE_SIZE = (128, 128)
 
-#Create Model
+
 # โหลดโมเดลที่ฝึกเสร็จแล้ว
 model = load_model('image_pair_classify.keras')
 

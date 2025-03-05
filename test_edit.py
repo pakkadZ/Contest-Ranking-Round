@@ -13,9 +13,9 @@ TRAIN_IM_PAIR = 475
 VALIDATE_IM_PAIR  = 25
 
 
-#Create Model
 
-#Create Model
+
+
 input_encoder = Input(shape=(IMAGE_SIZE[0],IMAGE_SIZE[1],3))
 conv1 = Conv2D(32, (3, 3), activation='relu')(input_encoder)
 pool1 = MaxPooling2D((2, 2))(conv1)
