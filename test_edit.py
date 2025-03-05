@@ -7,7 +7,7 @@ import tensorflow as tf
 import pandas as pd
 
 BATCH_SIZE = 25
-MAX_EPOCH = 200
+MAX_EPOCH = 500
 IMAGE_SIZE = (128,128)
 TRAIN_IM_PAIR = 475
 VALIDATE_IM_PAIR  = 25
