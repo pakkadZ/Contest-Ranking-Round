@@ -6,7 +6,6 @@ from tensorflow.keras.models import load_model
 # ขนาดของภาพที่โมเดลใช้
 IMAGE_SIZE = (128, 128)
 
-
 # โหลดโมเดลที่ฝึกเสร็จแล้ว
 model = load_model('image_pair_classify.keras')
 
@@ -28,39 +27,33 @@ def test_image_pair(img1_path, img2_path):
 
     # ทำนายผล
     y_pred = model.predict([test_im_1, test_im_2])
-    return y_pred
-
-# ฟังก์ชันเพื่อบันทึกผลการทดสอบ
-def save_accuracy_to_file(img1_path, img2_path, accuracy, file_path='test_accuracy_results.txt'):
-    with open(file_path, 'a') as f:
-        f.write(f"Test images: {img1_path}, {img2_path} => Accuracy: {accuracy}\n")
+    return y_pred[0][0]  # คืนค่า accuracy (0 ถึง 1)
 
 # โหลดข้อมูลจาก CSV
 test_data = pd.read_csv('D:\\tenserflow\\testset\\test.csv')
 
-# ตัวแปรสำหรับคำนวณค่าเฉลี่ย
-total_accuracy = 0
-count = 0
+# เพิ่มคอลัมน์ใหม่สำหรับผลลัพธ์
+predicted_winners = []
 
 # ลูปเพื่อทดสอบภาพทุกคู่ใน CSV
 for index, row in test_data.iterrows():
     test_image_1 = 'D:\\tenserflow\\testset\\' + row['Image 1']
     test_image_2 = 'D:\\tenserflow\\testset\\' + row['Image 2']
 
-    # ทำนายความแม่นยำ
-    y_pred = test_image_pair(test_image_1, test_image_2)
-    accuracy = y_pred[0][0]  # ค่าความแม่นยำจากโมเดล (0 ถึง 1)
+    # ทำนาย
+    accuracy = test_image_pair(test_image_1, test_image_2)
+
+    # ตัดสินใจว่าโมเดลเลือกภาพไหน
+    predicted_winner = "Image 1" if accuracy > 0.5 else "Image 2"
+    predicted_winners.append(predicted_winner)
 
     # แสดงผล
-    print(f"Predicted Accuracy for {test_image_1} and {test_image_2}: {accuracy * 100:.2f}%")
+    print(f"Predicted: {predicted_winner} for {test_image_1} and {test_image_2} (Score: {accuracy:.2f})")
 
-    # บันทึกผลลัพธ์ในไฟล์
-    save_accuracy_to_file(test_image_1, test_image_2, accuracy * 100)
+# เพิ่มผลลัพธ์เข้าไปใน DataFrame
+test_data["Predicted Winner"] = predicted_winners
 
-    # รวมค่า accuracy สำหรับการคำนวณเฉลี่ย
-    total_accuracy += accuracy
-    count += 1
+# บันทึกกลับไปที่ไฟล์ CSV
+test_data.to_csv('D:\\tenserflow\\testset\\test_results.csv', index=False)
 
-# คำนวณค่าเฉลี่ยของ accuracy
-average_accuracy = total_accuracy / count
-print(f"Average Accuracy: {average_accuracy * 100:.2f}%")
+print("✅ ผลลัพธ์ถูกบันทึกลงใน test_results.csv เรียบร้อยแล้ว!")
